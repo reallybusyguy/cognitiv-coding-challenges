@@ -4,26 +4,9 @@
 #include <string_view>
 #include <vector>
 #include <atomic>
-#include <sequence_buffer.hpp>
+#include "sequence_buffer.hpp"
+#include "../byte_view.hpp"
 
-namespace detail
-{
-
-class binary_traits
-{
-public:
-    using char_type = std::byte;
-
-	static constexpr std::byte to_upper(std::byte c) noexcept {
-		return c;
-	}
-
-	static std::size_t length(const std::byte* s) {
-		throw std::logic_error("length of a binary string can't be determined. It must be explicitly supplied");
-	}
-};
-
-}
 
 class fake_stream
 {
@@ -31,7 +14,6 @@ class fake_stream
 	std::size_t chunksize_;
 	std::atomic<long> offset_;
 public:
-	using byte_view = std::basic_string_view<std::byte, detail::binary_traits>;
 
 	fake_stream();
 	fake_stream(const fake_stream& other);

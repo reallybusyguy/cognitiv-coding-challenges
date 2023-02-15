@@ -49,10 +49,10 @@ void fake_stream::seek(long offset)
 
 long fake_stream::size() const
 {
-	return data_.size();
+	return static_cast<long>(data_.size());
 }
 
-dna::sequence_buffer<fake_stream::byte_view> fake_stream::read()
+dna::sequence_buffer<byte_view> fake_stream::read()
 {
 	auto offset = offset_.load(std::memory_order_consume);
 	while (true)
@@ -61,7 +61,7 @@ dna::sequence_buffer<fake_stream::byte_view> fake_stream::read()
 		if (len == 0)
 			return byte_view(nullptr, 0);
 
-		if (offset_.compare_exchange_weak(offset, offset + len, std::memory_order_release))
+		if (offset_.compare_exchange_weak(offset, offset + long(len), std::memory_order_release))
 			return byte_view(data_.data() + offset, len);
 	}
 }
